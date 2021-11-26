@@ -1,32 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   linkedlist.c                                       :+:      :+:    :+:   */
+/*   polylist.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hkim <hkim@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/22 18:04:16 by bokim             #+#    #+#             */
-/*   Updated: 2021/11/25 18:03:47 by hkim             ###   ########.fr       */
+/*   Created: 2021/11/25 16:55:53 by bokim             #+#    #+#             */
+/*   Updated: 2021/11/25 18:24:15 by hkim             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-- 단순 연결 리스트
-인덱스가 없고, 본래 정해져있는 크기가 없다.
-배열과 달리 자료의 크기에 유동성이 있고, 인덱스를 통해 관리되지 않으며
-이전의 자료에 의해서 다음 자료가 유지되는 형태로 자료가 저장 및 관리된다.
-
-장점 -
-자료의 삽입과 삭제가 용이하다.
-리스트 내에서 자료의 이동이 필요하지 않다.
-
-단점 -
-포인터의 사용으로 인해 저장 공간의 낭비가 있다.
-알고리즘이 복잡하다.
-특정 자료의 탐색 시간이 많이 소요된다.
-*/
-
-#include "linkedlist.h"
+#include "polylist.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -38,12 +22,6 @@ LinkedList *createLinkedList()
 	return (linkedList);
 }
 
-/*
-삽입 함수
-시간 복잡도 : O(n)
-but, 추가하려는 위치의 이전 노드를 안다면 O(1)로 구현 가능
-이 함수는 이전 노드를 모르기 때문에 탐색까지 필요로 하므로 O(n)
-*/
 int addLLElement(LinkedList *pList, int position, ListNode element)
 {
 	if (position >= 0 && position <= pList->currentElementCount)
@@ -68,22 +46,18 @@ int addLLElement(LinkedList *pList, int position, ListNode element)
 	return (TRUE);
 }
 
-/*
-제거 함수
-시간 복잡도 : O(n)
-삽입 함수와 같음
-*/
 int removeLLElement(LinkedList *pList, int position)
 {
 	if (position >= 0 && position <= pList->currentElementCount)
 	{
-		ListNode *preNode = &(pList->headerNode);
-		for (int i = 0; i < position; i++)
-		{
-			preNode = preNode->pLink;
-		}
-		free(preNode->pLink);
-		preNode->pLink = preNode->pLink->pLink;
+		ListNode *preNode = 0;
+		if (position == 0)
+			preNode = &(pList->headerNode);
+		else
+			preNode = getLLElement(pList, position - 1);
+		ListNode *node = getLLElement(pList, position);
+		preNode->pLink = node->pLink;
+		free(node);
 		pList->currentElementCount--;
 	}
 	else
@@ -94,12 +68,6 @@ int removeLLElement(LinkedList *pList, int position)
 	return (TRUE);
 }
 
-/*
-탐색 함수
-시간 복잡도 : O(n)
-배열에서는 인덱스로 자료를 관리했기 때문에 O(1)이지만,
-연결 리스트에는 지정된 인덱스가 없기 때문에 헤더노드부터 찾아가야 한다.
-*/
 ListNode *getLLElement(LinkedList *pList, int position)
 {
 	if (position >= 0 && position <= pList->currentElementCount)
@@ -142,13 +110,11 @@ void deleteLinkedList(LinkedList *pList)
 
 void displayLinkedList(LinkedList *pList)
 {
-	int i = 0;
-
 	if (pList->currentElementCount > 0)
 	{
-		for (i = 0; i < pList->currentElementCount; i++)
+		for (int i = 0; i < pList->currentElementCount; i++)
 		{
-			printf("[%d] : %d\n", i, getLLElement(pList, i)->data);
+			printf("[%d] : %d %d\n", i, getLLElement(pList, i)->coef, getLLElement(pList, i)->deg);
 		}
 		printf("--------\n");
 	}
@@ -158,28 +124,77 @@ void displayLinkedList(LinkedList *pList)
 	}
 }
 
+void polySum(LinkedList *list1, LinkedList *list2){
+	// 두 리스트를 다 돌면서 최대 차수 찾기
+	int maxDeg = 0;
+	for (int i = 0; i < list1->currentElementCount; i++){
+		if (getLLElement(list1, i)->deg > maxDeg)
+			maxDeg = getLLElement(list1, i)->deg;
+	}
+	for (int i = 0; i < list2->currentElementCount; i++){
+		if (getLLElement(list2, i)->deg > maxDeg)
+			maxDeg = getLLElement(list2, i)->deg;
+	}
+	LinkedList *answer = createLinkedList();
+	ListNode node;
+	for (int i = maxDeg; i >= 0; i--){
+		int coef = 0;
+		for (int j = 0; j < list1->currentElementCount; j++){
+			if (getLLElement(list1, j)->deg == i){
+				coef += getLLElement(list1, j)->coef;
+			}
+		}
+		for (int j = 0; j < list2->currentElementCount; j++){
+			if (getLLElement(list2, j)->deg == i){
+				coef += getLLElement(list2, j)->coef;
+			}
+		}
+		if (coef != 0)
+		{
+			node.deg = i;
+			node.coef = coef;
+			addLLElement(answer, answer->currentElementCount, node);
+		}
+	}
+	displayLinkedList(answer);
+}
+
 int main()
 {
-	int i = 0;
-	int arrayCount = 0;
-
-	LinkedList *pList = NULL;
+/*
+6x^6 + 4x^5 	   + 2x^2
+	   1x^5 + 2x^4 + 3x^2 + 4
+*/
+	LinkedList *list1 = createLinkedList();
+	LinkedList *list2 = createLinkedList();
 	ListNode node;
-	pList = createLinkedList();
 
-	if (pList != NULL)
+	if (list1 != NULL || list2 != NULL)
 	{
-		node.data = 1;
-		addLLElement(pList, 0, node);
-		node.data = 3;
-		addLLElement(pList, 1, node);
-		node.data = 5;
-		addLLElement(pList, 2, node);
-		displayLinkedList(pList);
-		removeLLElement(pList, 0);
-		displayLinkedList(pList);
-		removeLLElement(pList, 0);
-		displayLinkedList(pList);
+		node.coef = 6;
+		node.deg = 6;
+		addLLElement(list1, 0, node);
+		node.coef = 4;
+		node.deg = 5;
+		addLLElement(list1, 1, node);
+		node.coef = 2;
+		node.deg = 2;
+		addLLElement(list1, 2, node);
+
+		node.coef = 1;
+		node.deg = 5;
+		addLLElement(list2, 0, node);
+		node.coef = 2;
+		node.deg = 4;
+		addLLElement(list2, 1, node);
+		node.coef = 3;
+		node.deg = 2;
+		addLLElement(list2, 2, node);
+		node.coef = 4;
+		node.deg = 0;
+		addLLElement(list2, 3, node);
+
+		polySum(list1, list2);
 	}
 
 	return 0;
