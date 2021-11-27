@@ -6,7 +6,7 @@
 /*   By: hkim <hkim@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/27 22:05:45 by hkim              #+#    #+#             */
-/*   Updated: 2021/11/27 23:08:35 by hkim             ###   ########.fr       */
+/*   Updated: 2021/11/27 23:34:53 by hkim             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,19 @@
 ArrayStack* createArrayStack(int maxElementCount)
 {
 	ArrayStack *stack = (ArrayStack *)malloc(sizeof(ArrayStack));
+	if (!stack)
+	{
+		fprintf(stderr, "메모리 할당 실패");
+		exit(1);
+	}
 	stack->maxElementCount = maxElementCount;
 	stack->currentElementCount = 0;
 	stack->pElement = (ArrayStackNode *)malloc(sizeof(ArrayStackNode) * maxElementCount);
+	if (!stack->pElement)
+	{
+		fprintf(stderr, "메모리 할당 실패");
+		exit(1);
+	}
 	return (stack);
 }
 
