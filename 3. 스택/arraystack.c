@@ -6,7 +6,7 @@
 /*   By: hkim <hkim@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/27 22:05:45 by hkim              #+#    #+#             */
-/*   Updated: 2021/11/27 23:34:53 by hkim             ###   ########.fr       */
+/*   Updated: 2021/11/28 16:07:06 by hkim             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,19 @@ ArrayStack* createArrayStack(int maxElementCount)
 	ArrayStack *stack = (ArrayStack *)malloc(sizeof(ArrayStack));
 	if (!stack)
 	{
-		fprintf(stderr, "메모리 할당 실패");
+		fprintf(stderr, "메모리 할당 실패\n");
 		exit(1);
+	}
+	if (maxElementCount < 0)
+	{
+		printf("스택 크기는 0보다 커야함\n");
 	}
 	stack->maxElementCount = maxElementCount;
 	stack->currentElementCount = 0;
 	stack->pElement = (ArrayStackNode *)malloc(sizeof(ArrayStackNode) * maxElementCount);
 	if (!stack->pElement)
 	{
-		fprintf(stderr, "메모리 할당 실패");
+		fprintf(stderr, "메모리 할당 실패\n");
 		exit(1);
 	}
 	return (stack);
@@ -35,6 +39,8 @@ ArrayStack* createArrayStack(int maxElementCount)
 
 int pushAS(ArrayStack* pStack, ArrayStackNode element)
 {
+	if (!pStack)
+		return (FALSE);
 	if (pStack->currentElementCount < pStack->maxElementCount)
 	{
 		pStack->pElement[pStack->currentElementCount] = element;
@@ -50,6 +56,8 @@ int pushAS(ArrayStack* pStack, ArrayStackNode element)
 
 ArrayStackNode* popAS(ArrayStack* pStack)
 {
+	if (!pStack)
+		return (FALSE);
 	if (pStack->currentElementCount > 0)
 	{
 		ArrayStackNode *node = &(pStack->pElement[pStack->currentElementCount - 1]);
@@ -66,6 +74,8 @@ ArrayStackNode* popAS(ArrayStack* pStack)
 
 ArrayStackNode* peekAS(ArrayStack* pStack)
 {
+	if (!pStack)
+		return (NULL);
 	if (pStack->currentElementCount > 0)
 	{
 		ArrayStackNode *node = &(pStack->pElement[pStack->currentElementCount - 1]);
@@ -81,6 +91,8 @@ ArrayStackNode* peekAS(ArrayStack* pStack)
 
 void deleteArrayStack(ArrayStack* pStack)
 {
+	if (!pStack)
+		return ;
 	free(pStack->pElement);
 	pStack->pElement = NULL;
 	free(pStack);
@@ -89,11 +101,15 @@ void deleteArrayStack(ArrayStack* pStack)
 
 int isArrayStackFull(ArrayStack* pStack)
 {
+	if (!pStack)
+		return (FALSE);
 	return (pStack->currentElementCount == pStack->maxElementCount);
 }
 
 int isArrayStackEmpty(ArrayStack* pStack)
 {
+	if (!pStack)
+		return (FALSE);
 	return (pStack->currentElementCount == 0);
 }
 
