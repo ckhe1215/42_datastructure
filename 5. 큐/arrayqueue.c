@@ -6,7 +6,7 @@
 /*   By: hkim <hkim@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/03 22:55:34 by hkim              #+#    #+#             */
-/*   Updated: 2021/12/04 04:23:42 by hkim             ###   ########.fr       */
+/*   Updated: 2021/12/04 04:32:03 by hkim             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int enqueueAQ(ArrayQueue* pQueue, ArrayQueueNode element)
 {
 	if (!pQueue)
 		return (FALSE);
-	if (pQueue->currentElementCount == pQueue->maxElementCount)
+	if (isArrayQueueFull(pQueue))
 	{
 		printf("queue가 가득 찼음\n");
 		return (FALSE);
@@ -59,7 +59,7 @@ ArrayQueueNode *dequeueAQ(ArrayQueue* pQueue)
 {
 	if (!pQueue)
 		return (FALSE);
-	if (pQueue->currentElementCount == 0)
+	if (isArrayQueueEmpty(pQueue))
 	{
 		printf("queue가 비어있음\n");
 		return (FALSE);
