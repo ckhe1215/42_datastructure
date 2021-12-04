@@ -6,7 +6,7 @@
 /*   By: hkim <hkim@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/03 22:55:34 by hkim              #+#    #+#             */
-/*   Updated: 2021/12/04 04:32:03 by hkim             ###   ########.fr       */
+/*   Updated: 2021/12/04 04:40:04 by hkim             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,14 +95,14 @@ void deleteArrayQueue(ArrayQueue* pQueue)
 
 int isArrayQueueFull(ArrayQueue* pQueue)
 {
-	// return (pQueue->currentElementCount == pQueue->maxElementCount);
-	return ((pQueue->rear + 1) % pQueue->maxElementCount == pQueue->front);
+	return (pQueue->currentElementCount == pQueue->maxElementCount);
+	// return ((pQueue->rear + 1) % pQueue->maxElementCount == pQueue->front);
 }
 
 int isArrayQueueEmpty(ArrayQueue* pQueue)
 {
-	// return (pQueue->currentElementCount == 0);
-	return (pQueue->front == pQueue->rear);
+	return (pQueue->currentElementCount == 0);
+	// return (pQueue->front == pQueue->rear);
 }
 
 int main()

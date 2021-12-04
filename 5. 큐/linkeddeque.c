@@ -6,29 +6,13 @@
 /*   By: hkim <hkim@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/04 04:28:44 by hkim              #+#    #+#             */
-/*   Updated: 2021/12/04 23:25:32 by hkim             ###   ########.fr       */
+/*   Updated: 2021/12/05 04:50:01 by hkim             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "linkeddeque.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-/*
-typedef struct DequeNodeType
-{
-	char data;
-	struct DequeNodeType* pRLink;
-	struct DequeNodeType* pLLink;
-} DequeNode;
-
-typedef struct LinkedDequeType
-{
-	int currentElementCount;	// 현재 원소의 개수
-	DequeNode* pFrontNode;		// Front 노드의 포인터
-	DequeNode* pRearNode;		// Rear 노드의 포인터
-} LinkedDeque;
-*/
 
 LinkedDeque* createLinkedDeque()
 {
@@ -47,7 +31,7 @@ LinkedDeque* createLinkedDeque()
 int insertFrontLD(LinkedDeque* pDeque, DequeNode element)
 {
 	if (!pDeque)
-		return (NULL);
+		return (FALSE);
 	DequeNode* node = malloc(sizeof(DequeNode));
 	if (!node)
 	{
@@ -56,9 +40,11 @@ int insertFrontLD(LinkedDeque* pDeque, DequeNode element)
 	}
 	*node = element;
 	node->pLLink = NULL;
-	node->pRLink = pDeque->pFrontNode; // 덱이 비어있으면?
+	node->pRLink = pDeque->pFrontNode;
 	if (pDeque->pFrontNode)
 		pDeque->pFrontNode->pLLink = node;
+	else
+		pDeque->pRearNode = node;
 	pDeque->pFrontNode = node;
 	pDeque->currentElementCount++;
 	return (TRUE);
@@ -67,7 +53,7 @@ int insertFrontLD(LinkedDeque* pDeque, DequeNode element)
 int insertRearLD(LinkedDeque* pDeque, DequeNode element)
 {
 	if (!pDeque)
-		return (NULL);
+		return (FALSE);
 	DequeNode* node = malloc(sizeof(DequeNode));
 	if (!node)
 	{
@@ -76,7 +62,7 @@ int insertRearLD(LinkedDeque* pDeque, DequeNode element)
 	}
 	*node = element;
 	node->pRLink = NULL;
-	if (pDeque->pRearNode == NULL) // 덱이 비어있을 때
+	if (pDeque->currentElementCount == 0) // 덱이 비어있을 때
 	{
 		node->pLLink = NULL;
 		pDeque->pFrontNode = node;
@@ -98,11 +84,10 @@ DequeNode* deleteFrontLD(LinkedDeque* pDeque)
 	if (pDeque->currentElementCount == 0)
 		return (NULL);
 	DequeNode* node = pDeque->pFrontNode;
-	node->pRLink = NULL;
 	pDeque->pFrontNode = pDeque->pFrontNode->pRLink;
+	node->pLLink = NULL;
 	if (pDeque->currentElementCount == 1)
 	{
-		pDeque->pFrontNode = NULL;
 		pDeque->pRearNode = NULL;
 	}
 	else
@@ -115,35 +100,84 @@ DequeNode* deleteFrontLD(LinkedDeque* pDeque)
 
 DequeNode* deleteRearLD(LinkedDeque* pDeque)
 {
-
+	if (!pDeque)
+		return (NULL);
+	if (pDeque->currentElementCount == 0)
+		return (NULL);
+	DequeNode* node = pDeque->pRearNode;
+	pDeque->pRearNode = pDeque->pRearNode->pLLink;
+	node->pLLink = NULL;
+	if (pDeque->currentElementCount == 1)
+		pDeque->pFrontNode = NULL;
+	else
+		pDeque->pRearNode->pRLink = NULL;
+	pDeque->currentElementCount--;
+	return (node);
 }
 
 DequeNode* peekFrontLD(LinkedDeque* pDeque)
 {
-
+	if (!pDeque)
+		return (NULL);
+	if (pDeque->currentElementCount == 0)
+		return (NULL);
+	DequeNode* node = pDeque->pFrontNode;
+	return (node);
 }
 
 DequeNode* peekRearLD(LinkedDeque* pDeque)
 {
-
+	if (!pDeque)
+		return (NULL);
+	if (pDeque->currentElementCount == 0)
+		return (NULL);
+	DequeNode* node = pDeque->pRearNode;
+	return (node);
 }
 
 void deleteLinkedDeque(LinkedDeque* pDeque)
 {
-
+	if (!pDeque)
+		return ;
+	while (pDeque->pRearNode)
+	{
+		DequeNode *node = pDeque->pRearNode->pLLink;
+		free(pDeque->pRearNode);
+		pDeque->pRearNode = node;
+	}
+	free(pDeque);
+	pDeque = NULL;
 }
 
 int isLinkedDequeFull(LinkedDeque* pDeque)
 {
-
+	// ..?
 }
 
 int isLinkedDequeEmpty(LinkedDeque* pDeque)
 {
-
+	return (pDeque->pFrontNode == NULL);
 }
 
 int main()
 {
-
+	LinkedDeque *deque = createLinkedDeque();
+	DequeNode node;
+	node.data = 'a';
+	insertFrontLD(deque, node);
+	node.data = 'b';
+	insertRearLD(deque, node);
+	node.data = 'a';
+	insertFrontLD(deque, node);
+	node.data = 'b';
+	insertRearLD(deque, node);
+	printf("%c\n", peekFrontLD(deque)->data);
+	printf("%c\n", peekRearLD(deque)->data);
+	printf("%d\n", isLinkedDequeEmpty(deque));
+	printf("%c\n", deleteRearLD(deque)->data);
+	printf("%c\n", deleteRearLD(deque)->data);
+	printf("%c\n", deleteFrontLD(deque)->data);
+	printf("%c\n", deleteFrontLD(deque)->data);
+	printf("%d\n", isLinkedDequeEmpty(deque));
+	deleteLinkedDeque(deque);
 }
