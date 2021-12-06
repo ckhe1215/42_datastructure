@@ -6,7 +6,7 @@
 /*   By: hkim <hkim@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/04 04:28:44 by hkim              #+#    #+#             */
-/*   Updated: 2021/12/05 04:50:01 by hkim             ###   ########.fr       */
+/*   Updated: 2021/12/06 18:29:52 by hkim             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,8 @@ int isLinkedDequeFull(LinkedDeque* pDeque)
 
 int isLinkedDequeEmpty(LinkedDeque* pDeque)
 {
+	if (!pDeque)
+		return (FALSE);
 	return (pDeque->pFrontNode == NULL);
 }
 

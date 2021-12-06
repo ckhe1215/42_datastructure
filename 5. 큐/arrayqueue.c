@@ -6,7 +6,7 @@
 /*   By: hkim <hkim@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/03 22:55:34 by hkim              #+#    #+#             */
-/*   Updated: 2021/12/04 04:40:04 by hkim             ###   ########.fr       */
+/*   Updated: 2021/12/06 18:15:35 by hkim             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ ArrayQueue* createArrayQueue(int maxElementCount)
 		printf("maxElementCount가 너무 작습니다\n");
 		return (NULL);
 	}
-	ArrayQueue *queue = malloc(sizeof(ArrayQueue)); // 이거 꼭 동적할당 해야되나
+	ArrayQueue *queue = malloc(sizeof(ArrayQueue));
 	if (!queue)
 	{
 		printf("메모리 할당 실패 \n");
@@ -30,7 +30,7 @@ ArrayQueue* createArrayQueue(int maxElementCount)
 	queue->maxElementCount = maxElementCount;
 	queue->currentElementCount = 0;
 	queue->front = 0;
-	queue->rear = 0;
+	queue->rear = queue->maxElementCount - 1;
 	queue->pElement = malloc(sizeof(ArrayQueueNode) * maxElementCount);
 	if (!(queue->pElement))
 	{
@@ -50,8 +50,8 @@ int enqueueAQ(ArrayQueue* pQueue, ArrayQueueNode element)
 		return (FALSE);
 	}
 	pQueue->rear = (pQueue->rear + 1) % pQueue->maxElementCount;
-	pQueue->pElement[pQueue->rear] = element; // 이게 맞나
-	pQueue->currentElementCount++; // rear가 있어서 사실 cur가 필요없지 않나
+	pQueue->pElement[pQueue->rear] = element;
+	pQueue->currentElementCount++;
 	return (TRUE);
 }
 
@@ -64,8 +64,8 @@ ArrayQueueNode *dequeueAQ(ArrayQueue* pQueue)
 		printf("queue가 비어있음\n");
 		return (FALSE);
 	}
-	pQueue->front = (pQueue->front + 1) % pQueue->maxElementCount;
 	ArrayQueueNode* node = &(pQueue->pElement[pQueue->front]);
+	pQueue->front = (pQueue->front + 1) % pQueue->maxElementCount;
 	pQueue->currentElementCount--;
 	return (node);
 }
@@ -88,21 +88,31 @@ void deleteArrayQueue(ArrayQueue* pQueue)
 	if (!pQueue)
 		return;
 	free(pQueue->pElement);
-	pQueue->pElement = NULL;
 	free(pQueue);
-	pQueue = NULL;
 }
 
 int isArrayQueueFull(ArrayQueue* pQueue)
 {
+	if (!pQueue)
+		return (FALSE);
 	return (pQueue->currentElementCount == pQueue->maxElementCount);
-	// return ((pQueue->rear + 1) % pQueue->maxElementCount == pQueue->front);
 }
 
 int isArrayQueueEmpty(ArrayQueue* pQueue)
 {
+	if (!pQueue)
+		return (FALSE);
 	return (pQueue->currentElementCount == 0);
-	// return (pQueue->front == pQueue->rear);
+}
+
+void displayArrayQueue(ArrayQueue* pQueue)
+{
+	if (!pQueue)
+		return ;
+	for (int i = 0; i < pQueue->currentElementCount; i++)
+	{
+		printf("%c\n", pQueue->pElement[(i + pQueue->front) % pQueue->currentElementCount].data);
+	}
 }
 
 int main()
@@ -120,15 +130,11 @@ int main()
 	node.data = 'd';
 	enqueueAQ(queue, node);
 	printf("%c\n", dequeueAQ(queue)->data);
-	printf("%c\n", dequeueAQ(queue)->data);
+	printf("%c\n", peekAQ(queue)->data);
 	node.data = 'e';
 	enqueueAQ(queue, node);
-	node.data = 'f';
-	enqueueAQ(queue, node);
-	printf("%c\n", dequeueAQ(queue)->data);
-	printf("%c\n", dequeueAQ(queue)->data);
-	printf("%c\n", dequeueAQ(queue)->data);
-	printf("%c\n", dequeueAQ(queue)->data);
+	printf("-----\n");
+	displayArrayQueue(queue);
 	printf("isEmpty : %d\n", isArrayQueueEmpty(queue));
 	printf("isFull : %d\n", isArrayQueueFull(queue));
 }
