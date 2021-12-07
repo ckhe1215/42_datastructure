@@ -6,7 +6,7 @@
 /*   By: hkim <hkim@student.42seoul.kr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/03 22:55:34 by hkim              #+#    #+#             */
-/*   Updated: 2021/12/06 20:59:13 by hkim             ###   ########.fr       */
+/*   Updated: 2021/12/07 14:39:41 by hkim             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ void displayArrayQueue(ArrayQueue* pQueue)
 		return ;
 	for (int i = 0; i < pQueue->currentElementCount; i++)
 	{
-		printf("%c\n", pQueue->pElement[(pQueue->front + i) % pQueue->currentElementCount].data);
+		printf("%c\n", pQueue->pElement[(pQueue->front + i) % pQueue->maxElementCount].data);
 	}
 }
 
