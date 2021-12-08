@@ -43,8 +43,8 @@ QueueNode *dequeueLQ(LinkedQueue* pQueue)
 	if (!pQueue || isLinkedQueueEmpty(pQueue))
 		return (NULL);
 	pReturn = pQueue->pFrontNode;
-	pReturn->pLink = NULL;
 	pQueue->pFrontNode = pQueue->pFrontNode->pLink;
+	pReturn->pLink = NULL;
 	if (pQueue->currentElementCount == 1)
 	{
 		pQueue->pRearNode = NULL;
@@ -91,3 +91,22 @@ void displayLinkedQueue(LinkedQueue* pQueue)
 		pNode = pNode->pLink;
 	}
 }
+
+// int main()
+// {
+// 	LinkedQueue* queue = createLinkedQueue();
+// 	QueueNode node;
+// 	node.data = 'a';
+// 	enqueueLQ(queue, node);
+// 	node.data = 'b';
+// 	enqueueLQ(queue, node);
+// 	node.data = 'c';
+// 	enqueueLQ(queue, node);
+// 	node.data = 'd';
+// 	enqueueLQ(queue, node);
+// 	printf("%c\n", dequeueLQ(queue)->data);
+// 	printf("%c\n", peekLQ(queue)->data);
+// 	node.data = 'e';
+// 	enqueueLQ(queue, node);
+// 	displayLinkedQueue(queue);
+// }
