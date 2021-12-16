@@ -72,6 +72,8 @@ MaxHeapNode removeMaxHeap(MaxHeap* pHeap)
 
 void deleteMaxHeap(MaxHeap* pHeap)
 {
+	if (!pHeap)
+		return ;
 	free(pHeap->pElement);
 	free(pHeap);
 }
