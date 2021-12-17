@@ -65,6 +65,8 @@ int deleteElementBST(BinSearchTree* pBinSearchTree, int key)
 {
 	BinSearchTreeNode* pParent;
 	BinSearchTreeNode* pNode;
+	BinSearchTreeNode* pPredcessor;
+	BinSearchTreeNode* pSuccessor;
 
 	if (!pBinSearchTree)
 		return (FALSE);
@@ -76,12 +78,12 @@ int deleteElementBST(BinSearchTree* pBinSearchTree, int key)
 	}
 	while (pParent)
 	{
-		if (pParent->pLeftChild->key == key)
+		if (pParent->pLeftChild && pParent->pLeftChild->key == key)
 		{
 			pNode = pParent->pLeftChild;
 			break;
 		}
-		else if (pParent->pRightChild->key == key)
+		else if (pParent->pRightChild && pParent->pRightChild->key == key)
 		{
 			pNode = pParent->pRightChild;
 			break;
@@ -93,13 +95,13 @@ int deleteElementBST(BinSearchTree* pBinSearchTree, int key)
 	}
 	if (pNode->pLeftChild == NULL && pNode->pRightChild == NULL)
 	{
-		pParent->pLeftChild = NULL;
-		pParent->pRightChild = NULL;
-		free(pNode);
+		if (pParent->pLeftChild == pNode)
+			pParent->pLeftChild = NULL;
+		else
+			pParent->pRightChild = NULL;
 	}
 	else if (pNode->pLeftChild == NULL || pNode->pRightChild == NULL)
 	{
-		free(pNode);
 		if (pNode->pLeftChild == NULL)
 		{
 			pNode = pNode->pLeftChild;
@@ -113,7 +115,20 @@ int deleteElementBST(BinSearchTree* pBinSearchTree, int key)
 	}
 	else
 	{
-
+		pPredcessor = pNode;
+		pSuccessor = pPredcessor->pLeftChild;
+		while (pSuccessor->pRightChild)
+		{
+			pPredcessor = pSuccessor;
+			pSuccessor = pSuccessor->pRightChild;
+		}
+		pPredcessor->pRightChild = pSuccessor->pLeftChild;
+		pSuccessor->pLeftChild = pNode->pLeftChild;
+		pSuccessor->pRightChild = pNode->pRightChild;
+		if (pParent->pLeftChild == pNode)
+			pParent->pLeftChild = pSuccessor;
+		else
+			pParent->pRightChild = pSuccessor;
 	}
 	return (TRUE);
 }
@@ -193,15 +208,10 @@ int main()
 	BinSearchTreeNode node;
 
 	pTree = createBinSearchTree();
-	node.key = 1;
+	node.key = 30;
 	node.value = 'a';
 	node.pLeftChild = NULL;
 	node.pRightChild = NULL;
-	insertElementBST(pTree, node);
-	node.key = 2;
-	node.value = 'b';
-	insertElementBST(pTree, node);
-	node.key = 30;
 	insertElementBST(pTree, node);
 	node.key = 20;
 	insertElementBST(pTree, node);
@@ -221,9 +231,12 @@ int main()
 	insertElementBST(pTree, node);
 	node.key = 22;
 	insertElementBST(pTree, node);
+	// deleteElementBST(pTree, 14);
+	// deleteElementBST(pTree, 24);
+	deleteElementBST(pTree, 20);
 	inorderTraversalBinTree(pTree->pRootNode);
 	// printf("%c\n", searchBST(pTree, 1)->value);
 	// printf("%c\n", searchBST(pTree, 2)->value);
-	printf("%d\n", searchRecursiveBST(pTree, 10)->key);
+	// printf("%d\n", searchRecursiveBST(pTree, 10)->key);
 	deleteBinSearchTree(pTree);
 }
