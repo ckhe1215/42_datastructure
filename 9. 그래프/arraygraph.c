@@ -168,7 +168,6 @@ void dfs(ArrayGraph* pGraph, int* visit, int n)
 		if (pGraph->ppAdjEdge[n][i] != 0 && visit[i] == FALSE)
 			dfs(pGraph, visit, i);
 	}
-
 }
 
 void bfs(ArrayGraph* pGraph, int* visit, int n)
