@@ -10,10 +10,10 @@
 : 가중치가 작은 간선부터 연결
 : 만약 n번째로 가중치가 작은 간선을 연결했을때 사이클이 생기면 연결하지 않음
 
-프림 알고리즘
-: 정점을 중심으로 트리를 구성
-: 시작 정점에서 연결된 간선 중 가장 가중치가 작은 간선을 트리에 포함시킴
-: 만들어진 트리에서 가중치가 작은 간선을 계속 포함시킴
+Union-find 알고리즘
+== 합집합 찾기 == 서로소 집합 알고리즘
+: 여러 개의 노드가 존재할 때 두 개의 노드를 선택해서 현재 이 두 노드가 서로 같은 그래프에 속하는지 판별하는 알고리즘
+
 */
 
 #include "linkedlist.h"
@@ -45,40 +45,40 @@ void bubbleSort(LinkedList* pList)
 	}
 }
 
-int getParent(int *kruskal, int n)
+int getParent(int *parent, int n)
 {
-	if (!kruskal)
+	if (!parent)
 		return (-1);
-	if (kruskal[n] == n)
+	if (parent[n] == n)
 		return (n);
-	return (getParent(kruskal, kruskal[n]));
+	return (getParent(parent, parent[n]));
 }
 
-void unionParent(int *kruskal, int a, int b)
+void unionParent(int *parent, int a, int b)
 {
-	if (!kruskal)
+	if (!parent)
 		return ;
-	int parentA = getParent(kruskal, a);
-	int parentB = getParent(kruskal, b);
+	int parentA = getParent(parent, a);
+	int parentB = getParent(parent, b);
 	if (parentA < parentB)
-		kruskal[parentB] = parentA;
+		parent[parentB] = parentA;
 	else
-		kruskal[parentA] = parentB;
+		parent[parentA] = parentB;
 
 }
 
-int findParent(int* kruskal, int from, int to)
+int findParent(int* parent, int from, int to)
 {
-	if (!kruskal)
+	if (!parent)
 		return (FALSE);
-	return (getParent(kruskal, from) == getParent(kruskal, to));
+	return (getParent(parent, from) == getParent(parent, to));
 }
 
 int main()
 {
 	LinkedList* edgeList;
 	ListNode node;
-	int* kruskal;
+	int* parent;
 
 	edgeList = createLinkedList();
 	node.from = 0;
@@ -114,17 +114,17 @@ int main()
 	bubbleSort(edgeList);
 	displayLinkedList(edgeList);
 
-	kruskal = malloc(sizeof(int) * edgeList->currentElementCount);
-	if (!kruskal)
+	parent = malloc(sizeof(int) * edgeList->currentElementCount);
+	if (!parent)
 		return (0);
 	for (int i = 0; i < edgeList->currentElementCount; i++)
-		kruskal[i] = i;
+		parent[i] = i;
 	for (int i = 0; i < edgeList->currentElementCount; i++)
 	{
-		if (!findParent(kruskal, getLLElement(edgeList, i)->from, getLLElement(edgeList, i)->to))
+		if (!findParent(parent, getLLElement(edgeList, i)->from, getLLElement(edgeList, i)->to))
 		{
 			printf("%d - %d\n", getLLElement(edgeList, i)->from, getLLElement(edgeList, i)->to);
-			unionParent(kruskal, getLLElement(edgeList, i)->from, getLLElement(edgeList, i)->to);
+			unionParent(parent, getLLElement(edgeList, i)->from, getLLElement(edgeList, i)->to);
 		}
 	}
 }
